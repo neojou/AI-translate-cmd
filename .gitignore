@@ -1,0 +1,26 @@
+
+# Cargo build output
+/target/
+# debug/
+
+# rustfmt backups
+**/*.rs.bk
+
+# MSVC debug symbols from Windows rustc builds
+*.pdb
+
+# macOS
+.DS_Store
+
+# Editor / IDE (user-specific)
+.idea/
+.openidea/
+.vscode/
+*.swp
+*~
+
+# Environment
+.env
+.env.*
+!.env.example
+

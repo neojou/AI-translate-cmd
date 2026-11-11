@@ -1,6 +1,8 @@
 [package]
 name = "ai_translate"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
+clap = { version = "4.0", features = ["derive"] }
+thiserror = "1.0"

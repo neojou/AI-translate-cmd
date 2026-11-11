@@ -1,32 +1,33 @@
 # Handover Context: AI-translate-cmd
 
 ## 📋 Project Summary
-This project is a Rust-based command-line tool intended for AI-powered translation (`AI-translate-cmd`). 
+This project is a Rust-based command-line tool intended for AI-powered translation (`AI-translate-cmd`). The tool takes an input language and a file path, translates the content to Traditional Chinese using an AI model, and outputs the result to stdout.
 
-**Current Progress:**
+## ✅ Current Progress
 - [x] Set up Rust project structure.
 - [x] Implemented a core module `AITranslate` in `src/ai_translate.rs`.
 - [x] `AITranslate` supports:
-    - Initializing with default language (`en`).
+    - Initializing with a default language (`en`).
     - Dynamic language validation using an internal list (`allowed_langs`).
     - Dynamically adding new allowed languages at runtime.
-- [x] Created a CLI interface in `src/main.rs` that accepts language arguments via `cargo run -- <lang>`.
+- [x] Implemented idiomatic error handling using `thiserror`.
+- [x] Implemented a CLI interface in `src/main.rs` using `std::env::args` with:
+    - Robust argument count validation.
+    - A `usage()` function for user guidance when arguments are incorrect.
+- [x] Added unit tests for `AITranslate` language management in `src/ai_translate.rs`.
 
 ## 🧠 Knowledge & Implementation Details
-- **Module System**: Used `mod ai_translate;` and `pub` keywords to enable cross-module access.
-- **Dynamic Validation**: Leveraged `Vec<String>` and `.contains()` in `set_input_lang` to replace hardcoded conditional checks, allowing for extensible language support.
-- **CLI Arguments**: Utilized `std::env::args()` to capture user input from the terminal.
-
-## 🛠️ Code Improvements & Technical Debt
-- **Error Handling**: Currently uses `println!` and early returns. Should transition to idiomatic Rust `Result<T, E>` patterns for better error propagation.
-- **Type Safety**: While `String` is flexible, using an `Enum` for core supported languages could prevent typos and improve performance, though the current `Vec`-based approach is better for truly dynamic scenarios.
-- **CLI Parsing**: The current manual indexing of `args` is fragile. Suggest integrating the `clap` crate for robust argument parsing (flags, help messages, etc.).
-- **Testing**: Unit tests for `AITranslate` (e.g., testing `set_input_lang` with edge cases) should be added to `src/ai_translate.rs`.
+- **Module System**: Used `mod ai_translate;` and `pub` keywords for cross-module access.
+- **Error Handling**: Leveraged `thiserror` to define `TranslateError`, enabling better error propagation and semantic error messages.
+- **CLI Logic**: Manual argument parsing via `std::env::args()` with strict checks for exactly 2 arguments (plus the executable name) to ensure correct usage.
+- **Testing**: Comprehensive unit tests covering initialization, successful language setting, and failed language setting.
 
 ## 🚀 Next Steps (Handover Instructions)
-1.  **Integrate Translation Logic**: The `AITranslate` struct is currently just a skeleton. The next phase should involve connecting it to an AI API (e.g., OpenAI, Anthropic) or a local model.
-2.  **Refactor CLI**: Replace manual `std::env::args` logic with `clap`.
-3.  **Enhance error handling**: Implement a custom `Error` type for the translation process.
-4.  **Add Unit Tests**: Ensure the language management logic is fully covered by tests.
+The next focus is **Integration of Translation Logic**.
 
-**Environment Note**: The project is a standard Cargo workspace. Use `cargo run -- <args>` for testing.
+1.  **Define `Translator` Trait**: Define a generic translation interface to allow easy switching between different AI providers (e.g., OpenAI, Anthropic, or local models).
+2.  **Implement OpenAI Provider**: Implement the first real translator using the OpenAI API. This will require adding `reqwest` and `serde` to `Cargo.toml`.
+3.  **Extend `AITranslate` struct**: Update `AITranslate` to hold and utilize a specific `Translator` implementation.
+4.  **Refine CLI**: Implement a way for users to provide their API Key, either via environment variables or command-line arguments.
+
+**Environment Note**: The project is a standard Cargo workspace. Use `cargo run -- <lang> <file>` for testing.

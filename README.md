@@ -1,54 +1,57 @@
-# AI-translate-cmd
+# 📖 語言切換 / Language Switching / 言語切替え
 
-`AI-translate-cmd` is a lightweight, Rust-based command-line tool designed for AI-powered translation. It allows users to translate files from a specified source language into Traditional Chinese using advanced AI models.
+[繁體中文 (Default)](./README.md) | [English](./README-en.md) | [日本語](./README-ja.md)
 
-## ✨ Features
+---
 
-- **AI-Powered**: Leverages large language models (LLMs) for high-quality translations.
-- **Dynamic Language Support**: Easily add and validate supported source languages.
-- **Extensible Architecture**: Designed to support multiple AI providers (e.g., OpenAI, Anthropic) through a unified trait system.
-- **CLI-Friendly**: Simple and intuitive command-line interface.
+# 📝 說明 (Traditional Chinese)
 
-## 🚀 Quick Start
+`AI-translate-cmd` 是一個基於 Rust 開發的命令列工具，利用 AI 模型（如 Ollama）將文本自動翻譯為繁體中文。
 
-### Prerequisites
+## ✨ 功能亮點
 
-- [Rust and Cargo](https://rustup.rs/)
+- **高效處理**：支援大型檔案的分段讀取與翻譯，不會佔用過多記憶體。
+- **智能分段**：自動偵測句末標點符號，確保翻譯不會在句子中間切斷。
+- **進度顯示**：在終端機即時顯示翻譯百分比。
+- **多語言支援**：支援多種輸入語言（如英文、日文等）。
 
-### Installation
+## 🚀 快速開始
 
-Clone the repository and install locally:
+### 1. 設定環境
 
+建立您的本地設定檔：
 ```bash
-git clone https://github.com/your-username/AI-translate-cmd.git
-cd AI-translate-cmd
-cargo install --path .
+cp config.example config.local
 ```
 
-### Usage
+編輯 `config.local` 並填入您的 Ollama URL 與模型名稱。
+**推薦使用模型**：`translategemma:4b` (針對翻譯任務優化)。
 
-To translate a file, specify the source language and the file path:
+### 2. 準備測試檔案
 
+準備英文或日文的測試樣本：
 ```bash
-# Syntax: ai-translate-cmd <input_lang> <input_file>
-# Example:
-ai-translate-cmd en sample.txt
+# 英文樣本
+echo "Hello, how are you?" > sample-en.txt
+
+# 日文樣本
+echo "こんにちは、元気ですか？" > sample-ja.txt
 ```
 
-## 🛠️ Development
+### 3. 執行翻譯
 
-To run the project without installing:
-
+使用以下指令進行翻譯：
 ```bash
-cargo run -- <lang> <file>
+# 翻譯英文樣本
+cargo run -- en sample-en.txt
+
+# 翻譯日文樣本
+cargo run -- ja sample-ja.txt
 ```
 
-To run tests:
+## 📂 輸出說明
 
-```bash
-cargo test
-```
+程式不會將結果印在螢幕上，而是會自動寫入檔案：
+- 預設輸出：`原檔名-out.txt` (例如 `sample-en-out.txt`)。
+- 若檔案已存在，會自動遞增編號：`原檔名-out-1.txt`, `原檔名-out-2.txt` ...
 
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).

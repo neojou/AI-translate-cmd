@@ -9,10 +9,6 @@ Rules:
 - Keep names and wording consistent with the reference when one is given.
 - Do not translate the reference again.
 
-## Reference
-
-{{reference}}
-
 ## Passage
 
 {{passage}}

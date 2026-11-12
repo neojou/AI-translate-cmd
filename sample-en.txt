@@ -1,0 +1,3 @@
+Hello, how are you?
+This is a test for the AI translator.
+It should work fine.

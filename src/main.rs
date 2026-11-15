@@ -67,7 +67,8 @@ fn get_output_filename(original_path: &str) -> PathBuf {
 /// 顯示使用說明
 fn usage(prog_name: &str) {
     println!("用法： {} <input_lang> <input_file>", prog_name);
-    println!("範例： {} en sample.txt", prog_name);
+    println!("範例：英翻中 {} en sample.txt", prog_name);
+    println!("範例：日翻中 {} ja sample.txt", prog_name);
     println!("\n提示：若要使用 Ollama，請確保 config.local 已正確設定");
 }
 

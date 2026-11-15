@@ -3,5 +3,5 @@ ollama_url="http://127.0.0.1:11434/v1"
 # model=gemma4
 model=translategemma:4b
 
-mum_ctx=65536
-
+# mum_ctx=65536
+num_ctx = 131072

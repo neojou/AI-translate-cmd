@@ -27,6 +27,8 @@ cp config.example config.local
 `config.local` を編集し、Ollama の URL とモデル名を記入してください。
 **推奨モデル**: `translategemma:4b` (翻訳タスクに最適化)。
 
+`config.local` と `src/AI-commands/translate.md` はコンパイル時にプログラムへ書き込まれます。`cargo run` はこれらのファイルが変更されると自動で再コンパイルします。ビルド済みのバイナリは、隣に置いたファイルを再度読み込みません。
+
 ### 2. テストファイルの準備
 
 英語または日本語のサンプルファイルを用意します：

@@ -28,6 +28,8 @@ cp config.example config.local
 Edit `config.local` with your Ollama URL and model name.
 **Recommended Model**: `translategemma:4b` (optimized for translation).
 
+`config.local` and `src/AI-commands/translate.md` are written into the program at compile time. `cargo run` rebuilds when either file changes. A binary that is already built does not read those files again.
+
 ### 2. Prepare Test Files
 
 Prepare English or Japanese sample files:

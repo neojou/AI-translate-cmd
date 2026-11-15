@@ -2,7 +2,6 @@ use crate::translator::{Translator, TranslatorError};
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use reqwest::Client;
-use std::fs;
 
 #[derive(Serialize)]
 struct ChatCompletionRequest {
@@ -35,20 +34,17 @@ pub struct OllamaTranslator {
     base_url: String,
     model: String,
     client: Client,
-    system_prompt_template: String,
+    system_prompt_template: &'static str,
 }
 
 impl OllamaTranslator {
-    pub fn new(base_url: String, model: String) -> Result<Self, TranslatorError> {
-        let template = fs::read_to_string("AI-commands/translate.md")
-            .map_err(|e| TranslatorError::ApiError(format!("Failed to read system prompt template: {}", e)))?;
-        
-        Ok(Self {
+    pub fn new(base_url: String, model: String) -> Self {
+        Self {
             base_url,
             model,
             client: Client::new(),
-            system_prompt_template: template,
-        })
+            system_prompt_template: include_str!("AI-commands/translate.md"),
+        }
     }
 }
 
@@ -57,9 +53,10 @@ impl Translator for OllamaTranslator {
     async fn translate(&self, text: &str, source_lang: &str, _target_lang: &str) -> Result<String, TranslatorError> {
         let url = format!("{}/chat/completions", self.base_url.trim_end_matches('/'));
 
-        let mut system_prompt = self.system_prompt_template.clone();
-        system_prompt = system_prompt.replace("{{source_language}}", source_lang);
-        system_prompt = system_prompt.replace("{{passage}}", text);
+        let system_prompt = self
+            .system_prompt_template
+            .replace("{{source_language}}", source_lang)
+            .replace("{{passage}}", text);
 
         let request_body = ChatCompletionRequest {
             model: self.model.clone(),
@@ -98,5 +95,14 @@ impl Translator for OllamaTranslator {
             let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
             Err(TranslatorError::ApiError(format!("Ollama API error (status {}): {}", status, error_text)))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn prompt_is_embedded() {
+        let raw = include_str!("AI-commands/translate.md");
+        assert!(!raw.trim().is_empty());
     }
 }

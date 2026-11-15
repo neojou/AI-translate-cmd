@@ -6,7 +6,6 @@ use ai_translate::AITranslate;
 use ollama_translator::OllamaTranslator;
 use translator::DummyTranslator;
 use std::env;
-use std::fs;
 use std::path::{Path, PathBuf};
 
 #[derive(Debug, Default)]
@@ -16,22 +15,24 @@ struct Config {
 }
 
 impl Config {
-    fn from_file(path: &str) -> Self {
+    fn from_embedded() -> Self {
+        Self::parse(include_str!("../config.local"))
+    }
+
+    fn parse(content: &str) -> Self {
         let mut config = Config::default();
-        if let Ok(content) = fs::read_to_string(path) {
-            for line in content.lines() {
-                let line = line.trim();
-                if line.is_empty() || line.starts_with('#') {
-                    continue;
-                }
-                if let Some((key, value)) = line.split_once('=') {
-                    let key = key.trim();
-                    let value = value.trim().trim_matches('"').trim_matches('\'');
-                    match key {
-                        "ollama_url" => config.ollama_url = Some(value.to_string()),
-                        "model" => config.model = Some(value.to_string()),
-                        _ => {}
-                    }
+        for line in content.lines() {
+            let line = line.trim();
+            if line.is_empty() || line.starts_with('#') {
+                continue;
+            }
+            if let Some((key, value)) = line.split_once('=') {
+                let key = key.trim();
+                let value = value.trim().trim_matches('"').trim_matches('\'');
+                match key {
+                    "ollama_url" => config.ollama_url = Some(value.to_string()),
+                    "model" => config.model = Some(value.to_string()),
+                    _ => {}
                 }
             }
         }
@@ -69,7 +70,7 @@ fn usage(prog_name: &str) {
     println!("用法： {} <input_lang> <input_file>", prog_name);
     println!("範例：英翻中 {} en sample.txt", prog_name);
     println!("範例：日翻中 {} ja sample.txt", prog_name);
-    println!("\n提示：若要使用 Ollama，請確保 config.local 已正確設定");
+    println!("\n提示：若要使用 Ollama，請確保編譯時已讀入 config.local");
 }
 
 #[tokio::main]
@@ -86,19 +87,13 @@ async fn main() {
     let target_lang = &args[1];
     let input_file = &args[2];
 
-    // 讀取設定檔
-    let config = Config::from_file("config.local");
+    // 編譯時寫入的設定
+    let config = Config::from_embedded();
 
     // 決定使用哪種翻譯器
     let translator: Box<dyn translator::Translator> = if let (Some(url), Some(model)) = (config.ollama_url, config.model) {
         println!("🚀 偵測到 Ollama 設定，正在初始化 OllamaTranslator (模型: {})...", model);
-        match OllamaTranslator::new(url, model) {
-            Ok(ot) => Box::new(ot),
-            Err(e) => {
-                println!("❌ 初始化 OllamaTranslator 失敗: {}", e);
-                return;
-            }
-        }
+        Box::new(OllamaTranslator::new(url, model))
     } else {
         println!("⚠️ 未偵測到有效配置，將使用 DummyTranslator (僅供測試用)...");
         Box::new(DummyTranslator)
@@ -132,5 +127,14 @@ async fn main() {
             println!("❌ 設定失敗！原因: {}", e);
             usage(prog_name);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn config_is_embedded() {
+        let raw = include_str!("../config.local");
+        assert!(!raw.trim().is_empty());
     }
 }

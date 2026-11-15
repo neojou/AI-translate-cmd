@@ -27,6 +27,8 @@ cp config.example config.local
 編輯 `config.local` 並填入您的 Ollama URL 與模型名稱。
 **推薦使用模型**：`translategemma:4b` (針對翻譯任務優化)。
 
+`config.local` 與 `src/AI-commands/translate.md` 會在編譯時寫進程式。`cargo run` 會在這兩個檔變更後自動重編。已經編好的二進位不會再讀取旁邊的檔案。
+
 ### 2. 準備測試檔案
 
 準備英文或日文的測試樣本：
